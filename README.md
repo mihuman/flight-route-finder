@@ -21,7 +21,7 @@ The weekdays and flight times are not important for the purposes of the test tas
 
 * Finding routes using both the flights and switches between adjacent airports.
 * Setting a maximum number of stops when finding a route (default is 3).
-* Some of the API design best practices implemented: logging, CORS, securing HTTP headers, compression, simple validation middleware, and more.
+* Some of the API design best practices implemented: logging, CORS, securing HTTP headers, compression, simple validation middleware, and more. For a minimal API with less dependencies, see the `minimal` branch.
 
 
 ## Installation
