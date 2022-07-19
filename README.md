@@ -77,9 +77,10 @@ A successful response has the following format:
 
 ```
 {
-  from: Source airport information,
-  to: Destination airport information,
   result: {
+    airports: Information about all airports across the resulting route,
+    from: Source airport ID,
+    to: Destination airport ID,
     segments: Resulting route segments,
     totalDistance: Total distance in kilometers
   }
@@ -90,67 +91,67 @@ Sample response:
 
 ```json
 {
-    "from": {
-        "id": 415,
-        "name": "Lennart Meri Tallinn Airport",
-        "city": "Tallinn-ulemiste International",
-        "country": "Estonia",
-        "iata": "TLL",
-        "icao": "EETN",
-        "latitude": 59.41329956049999,
-        "longitude": 24.832799911499997
-    },
-    "to": {
-        "id": 3839,
-        "name": "Palm Springs International Airport",
-        "city": "Palm Springs",
-        "country": "United States",
-        "iata": "PSP",
-        "icao": "KPSP",
-        "latitude": 33.8297004699707,
-        "longitude": -116.50700378417969
-    },
     "result": {
+        "airports": {
+            "415": {
+                "id": 415,
+                "name": "Lennart Meri Tallinn Airport",
+                "city": "Tallinn-ulemiste International",
+                "country": "Estonia",
+                "iata": "TLL",
+                "icao": "EETN",
+                "latitude": 59.41329956049999,
+                "longitude": 24.832799911499997
+            },
+            "737": {
+                "id": 737,
+                "name": "Stockholm-Arlanda Airport",
+                "city": "Stockholm",
+                "country": "Sweden",
+                "iata": "ARN",
+                "icao": "ESSA",
+                "latitude": 59.651901245117,
+                "longitude": 17.918600082397
+            },
+            "3484": {
+                "id": 3484,
+                "name": "Los Angeles International Airport",
+                "city": "Los Angeles",
+                "country": "United States",
+                "iata": "LAX",
+                "icao": "KLAX",
+                "latitude": 33.94250107,
+                "longitude": -118.4079971
+            },
+            "3839": {
+                "id": 3839,
+                "name": "Palm Springs International Airport",
+                "city": "Palm Springs",
+                "country": "United States",
+                "iata": "PSP",
+                "icao": "KPSP",
+                "latitude": 33.8297004699707,
+                "longitude": -116.50700378417969
+            }
+        },
+        "from": 415,
+        "to": 3839,
         "segments": [
             {
-                "from": {
-                    "name": "Lennart Meri Tallinn Airport",
-                    "iata": "TLL",
-                    "icao": "EETN"
-                },
-                "to": {
-                    "name": "Stockholm-Arlanda Airport",
-                    "iata": "ARN",
-                    "icao": "ESSA"
-                },
+                "from": 415,
+                "to": 737,
                 "distance": 390.55,
                 "type": "FLIGHT"
             },
             {
-                "from": {
-                    "name": "Stockholm-Arlanda Airport",
-                    "iata": "ARN",
-                    "icao": "ESSA"
-                },
-                "to": {
-                    "name": "Los Angeles International Airport",
-                    "iata": "LAX",
-                    "icao": "KLAX"
-                },
+                "from": 737,
+                "to": 3484,
                 "distance": 8863.04,
                 "type": "FLIGHT"
             },
             {
-                "from": {
-                    "name": "Los Angeles International Airport",
-                    "iata": "LAX",
-                    "icao": "KLAX"
-                },
-                "to": {
-                    "name": "Palm Springs International Airport",
-                    "iata": "PSP",
-                    "icao": "KPSP"
-                },
+                "from": 3484,
+                "to": 3839,
                 "distance": 175.92,
                 "type": "FLIGHT"
             }

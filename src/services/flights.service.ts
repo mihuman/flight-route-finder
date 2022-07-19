@@ -1,10 +1,15 @@
 import { HttpException } from '@/exceptions/HttpException';
 import AirportRepository from '@/repositories/airport.repository';
 import RouteRepository from '@/repositories/route.repository';
-import { Airport, AirportInfo } from '@/types/airport.types';
+import { Airport } from '@/types/airport.types';
 import { ShortestPath, ShortestPathOptions, ShortestPathResult } from '@/types/graph.types';
 import { RouteInfo } from '@/types/route.types';
-import { RoutingResult, RoutingResultContainer, RoutingResultSegment } from '@/types/routing.types';
+import {
+  RoutingResult,
+  RoutingResultAirports,
+  RoutingResultContainer,
+  RoutingResultSegment,
+} from '@/types/routing.types';
 import { round } from '@utils/util';
 import RoutingGraph from './flights-routing/RoutingGraph';
 
@@ -42,28 +47,45 @@ class FlightsService {
     }
 
     const result: RoutingResult = {
+      airports: this.getAirports(path),
+      from: from.id,
+      to: to.id,
       segments: this.buildResultingSegments(path),
       totalDistance: round(cost),
     };
 
-    return { from, to, result };
+    return { result };
+  }
+
+  private getAirports(path: ShortestPath): RoutingResultAirports {
+    const airports: RoutingResultAirports = {};
+
+    for (const airportId of path) {
+      const airport: Airport | undefined = AirportRepository.getById(airportId);
+
+      if (!airport) {
+        throw new HttpException(500, 'There was a problem retrieving results.');
+      }
+
+      airports[airport.id] = airport;
+    }
+
+    return airports;
   }
 
   private buildResultingSegments(path: ShortestPath): RoutingResultSegment[] {
     const segments: RoutingResultSegment[] = [];
 
     for (let i = 0; i < path.length - 1; i++) {
-      const segmentFrom: AirportInfo | undefined = AirportRepository.getInfoById(path[i]);
-      const segmentTo: AirportInfo | undefined = AirportRepository.getInfoById(path[i + 1]);
       const route: RouteInfo | undefined = RouteRepository.getBetween(path[i], path[i + 1]);
 
-      if (!segmentFrom || !segmentTo || !route) {
+      if (!route) {
         throw new HttpException(500, 'There was a problem retrieving results.');
       }
 
       segments.push({
-        from: segmentFrom,
-        to: segmentTo,
+        from: path[i],
+        to: path[i + 1],
         distance: route.cost,
         type: route.type,
       });

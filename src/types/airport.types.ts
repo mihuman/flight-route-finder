@@ -13,8 +13,6 @@ export type Airport = {
   longitude: number;
 };
 
-export type AirportInfo = Pick<Airport, 'name' | 'iata' | 'icao'>;
-
 export type AirportMap = Map<AirportId, Airport>;
 
 export type AirportCodeMap = Map<AirportCode, AirportId>;
