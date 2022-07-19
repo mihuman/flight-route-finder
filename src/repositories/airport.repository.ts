@@ -1,11 +1,4 @@
-import {
-  Airport,
-  AirportCode,
-  AirportCodeMap,
-  AirportId,
-  AirportInfo,
-  AirportMap,
-} from '@/types/airport.types';
+import { Airport, AirportCode, AirportCodeMap, AirportId, AirportMap } from '@/types/airport.types';
 import airportData from '../../data/airports.json';
 
 class AirportRepository {
@@ -45,14 +38,6 @@ class AirportRepository {
 
   public getByCode(code: AirportCode): Airport | undefined {
     return this.airportMap.get(this.airportCodeMap.get(code));
-  }
-
-  public getInfoById(airportId: AirportId): AirportInfo | undefined {
-    const airport = this.getById(airportId);
-    if (!airport) return airport;
-
-    const { name, iata, icao } = airport;
-    return { name, iata, icao };
   }
 }
 
