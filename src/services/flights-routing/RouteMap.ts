@@ -54,7 +54,7 @@ class RouteMap {
     return result;
   }
 
-  *[Symbol.iterator]() {
+  private *[Symbol.iterator]() {
     for (const [from, connections] of this.map) {
       for (const [to, routeInfo] of connections) {
         yield { from, to, routeInfo };
