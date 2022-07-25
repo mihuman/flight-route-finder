@@ -190,6 +190,19 @@ Sample response:
 ```
 
 
+## Tests
+
+### Running tests
+
+To run tests, run `npm test`.
+
+### Test data
+
+Tests use a subset of the data provided in the `data` directory: airports and routes in the Baltic states. Four flight routes have been added for testing purposes: two routes between Kärdla (KDL) <-> Kuressaare (URE) and two between Kuressaare (URE) <-> Ruhnu (EERU). That is, these routes will later be marked with the `EITHER` type. See the testing graph (flight: red, ground switch: gray, either: red and white):
+
+![Test graph](/assets/images/test-graph.png)
+
+
 ## Acknowledgments
 
 The implementation of this API is significantly based on the following projects:
