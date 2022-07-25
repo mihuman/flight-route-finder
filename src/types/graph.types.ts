@@ -11,7 +11,7 @@ export type Node = NodeInfo & {
 
 export type Edge = {
   cost: number;
-  type?: string | number;
+  type?: string | number | Boolean;
 };
 
 export type EdgeMap = Map<NodeKey, Edge>;
