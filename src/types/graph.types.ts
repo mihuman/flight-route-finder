@@ -2,7 +2,8 @@ export type NodeKey = any;
 
 export type NodeInfo = {
   priority: number;
-  depth: number;
+  depth?: number;
+  switches?: number;
 };
 
 export type Node = NodeInfo & {
@@ -20,12 +21,13 @@ export type GraphMap = Map<NodeKey, EdgeMap>;
 
 export type ShortestPathOptions = {
   maxStops?: number;
+  maxSwitches?: number;
 };
 
 export type ShortestPathState = {
   node: Node;
   neighborEdge: Edge;
-  maxStops: number;
+  options: ShortestPathOptions;
 };
 
 export type ShortestPath = NodeKey[];

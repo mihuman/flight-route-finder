@@ -10,7 +10,7 @@ import { NodeKey, NodeInfo, Node } from '@/types/graph.types';
 class PriorityQueue {
   // The `keys` set is used to greatly improve the speed at which we can check
   // the presence of a value in the queue
-  private keys: Set<any> = new Set();
+  private keys: Set<NodeKey> = new Set();
   private queue: Node[] = [];
 
   /**
@@ -21,22 +21,20 @@ class PriorityQueue {
   }
 
   /**
-   * Sets priority and depth for a key in the queue.
+   * Sets priority and other properties for a key in the queue.
    * Inserts it in the queue if it does not already exists.
    * Returns the size of the queue.
    */
   public set(key: NodeKey, value: NodeInfo): number {
-    const { priority, depth } = value;
-
     if (!this.keys.has(key)) {
       // Insert a new entry if the key is not already in the queue
       this.keys.add(key);
-      this.queue.push({ key, priority, depth });
+      this.queue.push({ key, ...value });
     } else {
-      // Update priority and depth of an existing key
+      // Update priority and other properties of an existing key
       this.queue.map(element => {
         if (element.key === key) {
-          Object.assign(element, { priority, depth });
+          Object.assign(element, value);
         }
 
         return element;
