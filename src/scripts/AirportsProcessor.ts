@@ -16,6 +16,10 @@ class AirportsProcessor {
     return this.airportMap;
   }
 
+  public getAirportCodeMap(): AirportCodeMap {
+    return this.airportCodeMap;
+  }
+
   public async process(csvFile: string) {
     this.airports = await this.read(csvFile);
     this.airportMap = this.mapById();
@@ -47,7 +51,7 @@ class AirportsProcessor {
     return result;
   }
 
-  public getCodeMap(): AirportCodeMap {
+  private getCodeMap(): AirportCodeMap {
     const result = new Map<AirportCode, AirportId>();
 
     this.airports.forEach(airport => {

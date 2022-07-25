@@ -21,7 +21,9 @@ The weekdays and flight times are not important for the purposes of the test tas
 
 * Finding routes using both the flights and switches between adjacent airports.
 * Setting a maximum number of stops when finding a route (default is 3).
+* Setting a maximum number of 'ground' switches when finding a route (default is 1).
 * For an API with more features (logging, CORS, securing HTTP headers, compression, and more), see the `main` branch.
+
 
 ## Installation
 
@@ -61,12 +63,15 @@ The API exposes an endpoint at `/flights/find` with the following query paramete
 * `from`: (Required) IATA or ICAO code for the source airport
 * `to`: (Required) IATA or ICAO code for the destination airport
 * `max_stops`: (Optional, default value: 3) Maximum number of stops/layovers, not including stops for 'ground' switches (see [Task description](#task))
+* `max_switches`: (Optional, default value: 1) Maximum number of 'ground' switches between adjacent airports
 
 ### Sample requests
 
 ```
 http://localhost:3000/flights/find?from=TLL&to=PSP
 http://localhost:3000/flights/find?from=TLL&to=PSP&max_stops=1
+http://localhost:3000/flights/find?from=TLL&to=PSP&max_stops=1&max_switches=2
+http://localhost:3000/flights/find?from=TLL&to=KDL&max_switches=2
 http://localhost:3000/flights/find?from=EETN&to=YSGE&max_stops=5
 ```
 
@@ -183,6 +188,19 @@ Sample response:
     "error": "Cannot find airport with the code 'TALL'."
 }
 ```
+
+
+## Tests
+
+### Running tests
+
+To run tests, run `npm test`.
+
+### Test data
+
+Tests use a subset of the data provided in the `data` directory: airports and routes in the Baltic states. Four flight routes have been added for testing purposes: two routes between Kärdla (KDL) <-> Kuressaare (URE) and two between Kuressaare (URE) <-> Ruhnu (EERU). That is, these routes will later be marked with the `EITHER` type. See the testing graph (flight: red, ground switch: gray, either: red and white):
+
+![Test graph](/assets/images/test-graph.png)
 
 
 ## Acknowledgments

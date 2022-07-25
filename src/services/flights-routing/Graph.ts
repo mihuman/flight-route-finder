@@ -1,6 +1,7 @@
 import {
   Edge,
   GraphMap,
+  NodeInfo,
   NodeKey,
   ShortestPath,
   ShortestPathOptions,
@@ -11,10 +12,18 @@ import Queue from './PriorityQueue';
 
 class Graph {
   private graph: GraphMap = null;
-  private static MAX_PATH_STOPS = 1000;
 
   constructor(source: GraphMap) {
     this.graph = source;
+  }
+
+  /**
+   * Returns processed input options,
+   * enabling enriching options with default values.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected getOptions(_: ShortestPathOptions): ShortestPathOptions {
+    return {};
   }
 
   /**
@@ -22,30 +31,42 @@ class Graph {
    * based on current state.
    * Returns true if the current neighbor should be skipped.
    */
-  protected skipCondition({ node, maxStops }: ShortestPathState): Boolean {
-    return node.depth > maxStops;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected skipCondition(_: ShortestPathState): Boolean {
+    return false;
   }
 
   /**
-   * Defines a condition to decide whether to increase depth (number of stops)
-   * for current state.
-   * Returns true if depth should be increased.
+   * Returns the state for starting node.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected depthIncreaseCondition(_: ShortestPathState): Boolean {
-    return true;
+  protected getStartNodeState(): NodeInfo {
+    return { priority: 0 };
+  }
+
+  /**
+   * Returns the state for a frontier node
+   * based on current shortest path state.
+   */
+  protected calculateNodeState({ node, neighborEdge }: ShortestPathState): NodeInfo {
+    return {
+      priority: node.priority + neighborEdge.cost,
+    };
   }
 
   /**
    * Computes the shortest path between the specified nodes.
    */
-  public path(start: NodeKey, goal: NodeKey, options: ShortestPathOptions): ShortestPathResult {
+  public path(
+    start: NodeKey,
+    goal: NodeKey,
+    initialOptions: ShortestPathOptions = {},
+  ): ShortestPathResult {
     // Don't run when we don't have nodes set
     if (!this.graph.size) {
       return { path: null, cost: 0 };
     }
 
-    const maxStops = options.maxStops === undefined ? Graph.MAX_PATH_STOPS : options.maxStops;
+    const options: ShortestPathOptions = this.getOptions(initialOptions);
 
     const explored = new Set<NodeKey>();
     const frontier = new Queue();
@@ -55,7 +76,7 @@ class Graph {
     let totalCost = 0;
 
     // Add the starting point to the frontier, it will be the first node visited
-    frontier.set(start, { priority: 0, depth: 0 });
+    frontier.set(start, this.getStartNodeState());
 
     // Run until we have visited every node in the frontier
     while (!frontier.isEmpty()) {
@@ -84,35 +105,31 @@ class Graph {
       const neighbors: Map<NodeKey, Edge> = this.graph.get(node.key) || new Map();
       neighbors.forEach((neighborEdge, neighborNode) => {
         // If we already explored the node, or the stop condition is true, skip it
-        if (explored.has(neighborNode) || this.skipCondition({ node, neighborEdge, maxStops })) {
+        if (explored.has(neighborNode) || this.skipCondition({ node, neighborEdge, options })) {
           return null;
         }
 
         // If the neighboring node is not yet in the frontier, we add it with
-        // the correct cost and depth
+        // the correct cost
         if (!frontier.has(neighborNode)) {
           previous.set(neighborNode, node.key);
-          return frontier.set(neighborNode, {
-            priority: node.priority + neighborEdge.cost,
-            depth: this.depthIncreaseCondition({ node, neighborEdge, maxStops })
-              ? node.depth + 1
-              : node.depth,
-          });
+          return frontier.set(
+            neighborNode,
+            this.calculateNodeState({ node, neighborEdge, options }),
+          );
         }
 
         const frontierPriority = frontier.get(neighborNode).priority;
         const nodeCost = node.priority + neighborEdge.cost;
 
-        // Otherwise we only update the cost and depth of this node in the frontier when
+        // Otherwise we only update the cost of this node in the frontier when
         // it's below what's currently set
         if (nodeCost < frontierPriority) {
           previous.set(neighborNode, node.key);
-          return frontier.set(neighborNode, {
-            priority: nodeCost,
-            depth: this.depthIncreaseCondition({ node, neighborEdge, maxStops })
-              ? node.depth + 1
-              : node.depth,
-          });
+          return frontier.set(
+            neighborNode,
+            this.calculateNodeState({ node, neighborEdge, options }),
+          );
         }
 
         return null;
